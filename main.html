@@ -43,9 +43,34 @@
 		<div class="container">
 			<div class="section">
 				<div class="row">
+					<a class="btn blue-grey waves-effect waves-light" onclick="showmodal()">Add API</a>
+					<a class="btn blue-grey waves-effect waves-light" onclick="refresh()">Refresh</a>
+					<table>
+						<thead>
+							<th>API name</th>
+							<th>Value</th>
+							<th colspan="2">Options</th>
+						</thead>
+						<tbody id="table">
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
+		<div id="modal" class="modal">
+				<div class="modal-content" id="modal-content">
+					<input type="text" id="modal-name" placeholder="API name" />
+					<input type="text" id="modal-url" placeholder="Address" />
+					<input type="text" id="modal-path" placeholder="JSON path" />
+				</div>
+				<div class="modal-footer">
+					<a href="#!" class="modal-action modal-close waves-effect waves-light btn-flat">Close</a>
+					<a 
+						href="javascript:add()"
+						class="modal-action modal-close waves-effect waves-light btn-flat"
+						id="modal-button">Add</a>
+				</div>
+			</div>
 	</main>
 	<footer class="page-footer blue-grey darken-1">
 		<div class="footer-copyright">
