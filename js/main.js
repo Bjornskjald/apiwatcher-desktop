@@ -1,6 +1,3 @@
-const fs = require('fs')
-const path = require('path')
-const util = require('util')
 const request = require('superagent/superagent')
 var data, table, modal
 const confpath = process.platform == "win32" ? path.join(process.env.appdata, 'APIWatcher', 'data.json') : path.join(require('os').homedir(), '.abucoins')
@@ -8,34 +5,40 @@ const refresh = () => {
 	table.innerHTML = ''
 	data.entries.forEach((entry, index) => {
 		request.get(entry.url).then(res => {
-			let row = table.insertRow()
-			let name = row.insertCell()
-			name.innerHTML = entry.name
-
-			let value = row.insertCell()
-			var val = byString(res.body, entry.path)
-			value.innerHTML = typeof val === 'string' ? val : util.inspect(val)
-			
-			let edit = row.insertCell()
-			edit.innerHTML = `<a href="#!"><i data-id="${index}" class="material-icons">edit</i></a>`
-			edit.addEventListener('click', (ev) => {
-				var entry = data.entries[ev.target.dataset.id];
-				['name', 'url', 'path'].forEach(e => {modal[e].value = entry[e]})
-				var button = document.querySelector('#modal-button')
-				button.innerHTML = 'Save'
-				button.href = `javascript:save(${ev.target.dataset.id})`
-				$('#modal').modal('open')
-			})
-			
-			let remove = row.insertCell()
-			remove.innerHTML = `<a href="#!"><i data-id="${index}" class="material-icons">delete</i></a>`
-			remove.addEventListener('click', (ev) => {
-				console.log(ev.target.dataset.id)
-				ev.path[3].remove()
-				data.entries.splice(ev.target.dataset.id, 1)
-				saveconf()
-			})
+			addrow(entry, index, res.body)
+		}).catch(err => {
+			addrow(entry, index, err.toString())
 		})
+	})
+}
+
+const addrow = (entry, index, value) => {
+	let row = table.insertRow()
+	let name = row.insertCell()
+	name.innerHTML = entry.name
+
+	let value = row.insertCell()
+	var val = byString(value, entry.path)
+	value.innerHTML = typeof val === 'string' ? val : util.inspect(val)
+	
+	let edit = row.insertCell()
+	edit.innerHTML = `<a href="#!"><i data-id="${index}" class="material-icons">edit</i></a>`
+	edit.addEventListener('click', (ev) => {
+		var entry = data.entries[ev.target.dataset.id];
+		['name', 'url', 'path'].forEach(e => {modal[e].value = entry[e]})
+		var button = document.querySelector('#modal-button')
+		button.innerHTML = 'Save'
+		button.href = `javascript:save(${ev.target.dataset.id})`
+		$('#modal').modal('open')
+	})
+	
+	let remove = row.insertCell()
+	remove.innerHTML = `<a href="#!"><i data-id="${index}" class="material-icons">delete</i></a>`
+	remove.addEventListener('click', (ev) => {
+		console.log(ev.target.dataset.id)
+		ev.path[3].remove()
+		data.entries.splice(ev.target.dataset.id, 1)
+		saveconf()
 	})
 }
 
