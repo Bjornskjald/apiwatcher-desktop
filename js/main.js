@@ -1,3 +1,6 @@
+const fs = require('fs')
+const path = require('path')
+const util = require('util')
 const request = require('superagent/superagent')
 var data, table, modal
 const confpath = process.platform == "win32" ? path.join(process.env.appdata, 'APIWatcher', 'data.json') : path.join(require('os').homedir(), '.abucoins')
@@ -12,13 +15,13 @@ const refresh = () => {
 	})
 }
 
-const addrow = (entry, index, value) => {
+const addrow = (entry, index, result) => {
 	let row = table.insertRow()
 	let name = row.insertCell()
 	name.innerHTML = entry.name
 
 	let value = row.insertCell()
-	var val = byString(value, entry.path)
+	var val = byString(result, entry.path)
 	value.innerHTML = typeof val === 'string' ? val : util.inspect(val)
 	
 	let edit = row.insertCell()
