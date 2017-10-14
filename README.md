@@ -1,2 +1,2 @@
 # apiwatcher-desktop
-## Aplikacja monitorująca wartości JSON API
+Cross-platform desktop app for watching JSON API values
