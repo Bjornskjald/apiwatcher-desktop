@@ -46,6 +46,7 @@
   },
   "homepage": "https://github.com/Bjornskjald/apiwatcher-desktop#readme",
   "dependencies": {
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "superagent": "^3.6.3"
   }
 }
