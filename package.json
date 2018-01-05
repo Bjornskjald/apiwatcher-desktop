@@ -46,7 +46,9 @@
   },
   "homepage": "https://github.com/Bjornskjald/apiwatcher-desktop#readme",
   "dependencies": {
+    "7zip-bin-linux": "^1.1.0",
     "jquery": "^3.2.1",
+    "materialize-css": "^1.0.0-alpha.3",
     "superagent": "^3.6.3"
   }
 }

@@ -2,8 +2,16 @@ const fs = require('fs')
 const path = require('path')
 const util = require('util')
 const request = require('superagent/superagent')
-var data, table, modal
-const confpath = process.platform == "win32" ? path.join(process.env.appdata, 'APIWatcher', 'data.json') : path.join(require('os').homedir(), '.abucoins')
+
+const table = document.querySelector('#table')
+const modal = {
+	name: document.querySelector('#modal-name'),
+	url: document.querySelector('#modal-url'),
+	path: document.querySelector('#modal-path')
+}
+
+var data
+const confpath = process.platform === "win32" ? path.join(process.env.appdata, 'APIWatcher', 'data.json') : path.join(require('os').homedir(), '.abucoins')
 const refresh = () => {
 	table.innerHTML = ''
 	data.entries.forEach((entry, index) => {
@@ -21,7 +29,13 @@ const addrow = (entry, index, result) => {
 	name.innerHTML = entry.name
 
 	let value = row.insertCell()
-	var val = byString(result, entry.path)
+	//var val = byString(result, entry.path)
+	var val
+	try {
+		val = eval('result.' + entry.path)
+	} catch(e) {
+		val = e.toString()
+	}
 	value.innerHTML = typeof val === 'string' ? val : util.inspect(val)
 	
 	let edit = row.insertCell()
@@ -32,7 +46,7 @@ const addrow = (entry, index, result) => {
 		var button = document.querySelector('#modal-button')
 		button.innerHTML = 'Save'
 		button.href = `javascript:save(${ev.target.dataset.id})`
-		$('#modal').modal('open')
+		M.Modal.init(document.querySelector('#modal')).open()
 	})
 	
 	let remove = row.insertCell()
@@ -47,7 +61,7 @@ const addrow = (entry, index, result) => {
 
 const showmodal = () => {
 	[modal.name, modal.url, modal.path].forEach(e => {e.value = ''})
-	$('#modal').modal('open')
+	M.Modal.init(document.querySelector('#modal')).open()
 }
 
 const add = () => {
@@ -71,28 +85,20 @@ const save = (id) => {
 
 const saveconf = () => { fs.writeFileSync(confpath, JSON.stringify(data), 'utf8') }
 
-$(() => {
-	$('.modal').modal()
-	table = document.querySelector('#table')
-	modal = {
-		name: document.querySelector('#modal-name'),
-		url: document.querySelector('#modal-url'),
-		path: document.querySelector('#modal-path')
+document.querySelector('footer').children[0].children[0].innerHTML += '; version: ' + require('./package.json').version
+try {
+	data = JSON.parse(fs.readFileSync(confpath, 'utf8'))
+} catch(err) {
+	data = {
+		entries: [
+			{ name: 'Placeholder API', url: 'https://jsonplaceholder.typicode.com/posts/1', path: 'title' }
+		]
 	}
-	document.querySelector('footer').children[0].children[0].innerHTML += '; version: ' + require('./package.json').version
-	try {
-		data = JSON.parse(fs.readFileSync(confpath, 'utf8'))
-	} catch(err) {
-		data = {
-			entries: [
-				{ name: 'Placeholder API', url: 'https://jsonplaceholder.typicode.com/posts/1', path: 'title' }
-			]
-		}
-		saveconf()
-	}
-	refresh()
-});
+	saveconf()
+}
+refresh()
 
+/*
 const byString = (o, s) => {
 	if (s === '' || typeof s === 'undefined') {
 		return o
@@ -103,3 +109,4 @@ const byString = (o, s) => {
     }
     return o
 }
+*/
