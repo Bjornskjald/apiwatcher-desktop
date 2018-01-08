@@ -32,9 +32,10 @@ const addrow = (entry, index, result) => {
 	//var val = byString(result, entry.path)
 	var val
 	try {
-		val = eval('result.' + entry.path)
+		val = entry.path ? eval('result.' + entry.path) : result
 	} catch(e) {
 		val = e.toString()
+		console.error(e)
 	}
 	value.innerHTML = typeof val === 'string' ? val : util.inspect(val)
 	
